@@ -5,6 +5,6 @@ namespace jwt_token.Auth
 {
     public interface IGenerateJwtToken
     {
-        Task<JwtResponse> GenerateTokenAsync(JwtRequest jwtRequest);
+        JwtResponse GenerateTokenAsync(JwtRequest jwtRequest);
     }
 }
