@@ -1,4 +1,5 @@
 using jwt_token.Auth;
+using jwt_token.ExceptionHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -37,7 +38,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<CustomException>();
 app.MapControllers();
 
 app.Run();
