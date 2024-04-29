@@ -22,7 +22,7 @@ namespace jwt_token.ExceptionHandling
             catch (Exception ex)
             {
                 _logger.LogError($"exception raised - {ex.Message}");
-                await HandleExceptionAsync(context, ex)
+                await HandleExceptionAsync(context, ex);
             }
         }
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)

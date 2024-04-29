@@ -18,8 +18,6 @@ namespace jwt_token.Controllers
         [HttpPost]
         public IActionResult Login(JwtRequest jwtRequest)
         {
-            int x = 0;
-            int res = 54 / x;
             JwtResponse tokenResponse = new();
             tokenResponse = _jwtToken.GenerateTokenAsync(jwtRequest);
             if (tokenResponse.Status == StatusCodes.Status200OK)

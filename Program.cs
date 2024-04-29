@@ -1,5 +1,6 @@
 using jwt_token.Auth;
 using jwt_token.ExceptionHandling;
+using jwt_token.Model.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -20,6 +21,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:Key"]))
         };
     });
+builder.Services.Configure<Jwt>(builder.Configuration.GetSection("jwt"));
 builder.Services.AddControllers();
 builder.Services.AddScoped<IGenerateJwtToken, GenerateJwtToken>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
