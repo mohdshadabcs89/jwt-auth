@@ -3,11 +3,13 @@ using jwt_token.ExceptionHandling;
 using jwt_token.Model.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option =>
     {
@@ -21,6 +23,33 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:Key"]))
         };
     });
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("UserName", "admin"));
+//});
+
+//multiple claims value for same property
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+    {
+        policy.RequireAssertion(context =>
+            context.User.HasClaim(c =>
+                (c.Type == "UserName" && c.Value == "admin") ||
+                (c.Type == "UserName" && c.Value == "user")
+            ));
+    });
+});
+
+//Role based
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("AdminOnly", policy => policy.RequireRole("test"));
+//});
+
+
+
 builder.Services.Configure<Jwt>(builder.Configuration.GetSection("jwt"));
 builder.Services.AddControllers();
 builder.Services.AddScoped<IGenerateJwtToken, GenerateJwtToken>();

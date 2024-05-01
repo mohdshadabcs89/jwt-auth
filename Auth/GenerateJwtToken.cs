@@ -4,6 +4,7 @@ using jwt_token.Model.JwtResponse;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace jwt_token.Auth
@@ -24,14 +25,14 @@ namespace jwt_token.Auth
             var isUserAuthenticated = Authenticate(jwtRequest);
             if (isUserAuthenticated)
             {
-                jwtResponse= GetToken(jwtRequest);
+                jwtResponse = GetToken(jwtRequest);
             }
 
             return jwtResponse;
         }
         private bool Authenticate(JwtRequest jwtRequest)
         {
-            if (jwtRequest.UserName == "admin" && jwtRequest.Password == "123")
+            if ((jwtRequest.UserName == "admin"  || jwtRequest.UserName == "user" || jwtRequest.UserName == "user1") && jwtRequest.Password == "123")
             {
                 return true;
             }
@@ -47,14 +48,29 @@ namespace jwt_token.Auth
             //var token = new JwtSecurityToken(_configuration["jwt:Issuer"], _configuration["jwt:Audience"], null,
             //    expires: DateTime.Now.AddMinutes(1),
             //    signingCredentials: credential);
-
-            var token = new JwtSecurityToken(_config.Issuer, _config.Audience, null,
+            var claims = BuildClaims(jwtRequest);
+            var token = new JwtSecurityToken(_config.Issuer, _config.Audience, claims,
                 expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: credential);
             jwtResponse.UserName = jwtRequest.UserName;
             jwtResponse.Token = new JwtSecurityTokenHandler().WriteToken(token);
             jwtResponse.Status = StatusCodes.Status200OK;
             return jwtResponse;
+        }
+        private Claim[] BuildClaims(JwtRequest jwtRequest)
+        {
+            //User is Valid
+            var claims = new[]
+            {
+                new Claim("UserName",jwtRequest.UserName.ToString()),
+                new Claim(ClaimTypes.Email,jwtRequest.UserName.ToString()),
+                new Claim(ClaimTypes.Role,jwtRequest.Role)
+               
+ 
+                //Add Custom Claims here
+            };
+
+            return claims;
         }
     }
 }
